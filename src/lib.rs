@@ -24,6 +24,7 @@ pub mod merkle_tree;
 pub mod encryption;
 pub mod prf;
 pub mod signature;
+pub mod homomorphic_signature;
 pub mod snark;
 
 pub use self::{
@@ -33,6 +34,7 @@ pub use self::{
     prf::PRF,
     signature::SignatureScheme,
     snark::{CircuitSpecificSetupSNARK, UniversalSetupSNARK, SNARK},
+    homomorphic_signature::HomomorphicSignatureScheme
 };
 
 #[cfg(feature = "r1cs")]
