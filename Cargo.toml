@@ -45,7 +45,7 @@ ark-ed-on-bls12-381 = { version = "^0.3.0", default-features = false, features =
 ark-bls12-377 = { version = "^0.3.0", default-features = false, features = [ "curve", "r1cs" ] }
 ark-mnt4-298 = { version = "^0.3.0", default-features = false, features = [ "curve", "r1cs" ] }
 ark-mnt6-298 = { version = "^0.3.0", default-features = false, features = [ "r1cs" ] }
-ark-bn254 = {version = "^0.3.0"}
+ark-bn254 = {git = "https://github.com/arkworks-rs/curves.git", rev = "99831650f8021cb6a16481bac674420bc6c1a5a1"}
 
 [profile.release]
 opt-level = 3
