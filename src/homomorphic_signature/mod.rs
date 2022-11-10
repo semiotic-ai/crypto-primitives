@@ -1,3 +1,5 @@
+use core::ops::Add;
+
 use crate::Error;
 use ark_serialize::CanonicalSerialize;
 use ark_std::hash::Hash;
@@ -8,8 +10,8 @@ pub trait HomomorphicSignatureScheme {
     type Parameters: Clone + Send + Sync;
     type PublicKey: CanonicalSerialize + Hash + Eq + Clone + Default + Send + Sync;
     type SecretKey: CanonicalSerialize + Clone + Default;
-    type Signature: Clone + Default + Send + Sync;
-    type Message: Clone + Default + Send + Sync;
+    type Signature: Clone + Default + Send + Sync + Add<Self::Signature, Output = Self::Signature>;
+    type Message: Clone + Default + Send + Sync + Add<Self::Message, Output = Self::Message>;
     type Weight;
 
     // Create single g2 element and n g1
@@ -56,10 +58,14 @@ pub trait HomomorphicSignatureScheme {
 #[cfg(test)]
 mod test {
     use crate::homomorphic_signature::{ncs1, *};
-    use ark_ec::Group;
+    // use ark_ed_on_bls12_381::EdwardsProjective as Curve;
     use ark_bn254::Bn254 as Curve;
-    use ark_std::{test_rng, vec::Vec, UniformRand};
+    use ark_std::{test_rng, vec::Vec};
     use blake2::Blake2s;
+    use ark_ec::bn::Bn;
+    use ark_ec::pairing::Pairing;
+    use crate::ark_std::UniformRand;
+
 
     fn single_sign_and_verify<S: HomomorphicSignatureScheme>(tag: &[u8], index: &[u8], message: &[S::Message]) {
         let rng = &mut test_rng();
@@ -75,9 +81,10 @@ mod test {
     #[test]
     fn ncs1_signature_test() {
         let rng = &mut test_rng();
-        let message = Curve::ScalarField::rand(rng);
+        // let message = Curve::ScalarField::rand(rng);
+        let message = vec![<Bn<ark_bn254::Parameters> as Pairing>::ScalarField::rand(rng)];
         let tag: Vec<u8> = vec![rng.gen()];
         let index: Vec<u8> = vec![rng.gen()];
-        single_sign_and_verify::<ncs1::NCS1<Curve, Blake2s>>(&tag, &index, message.as_bytes());
+        single_sign_and_verify::<ncs1::NCS1<Curve, Blake2s>>(&tag, &index, &message);
     }
 }
